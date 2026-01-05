@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Minecraft Server Status</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      margin-top: 50px;
+    }
+
+    .server-box {
+      background: #1e1e1e;
+      border-radius: 10px;
+      padding: 20px;
+      width: 320px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .online {
+      color: #4caf50;
+      font-weight: bold;
+    }
+
+    .offline {
+      color: #f44336;
+      font-weight: bold;
+    }
+
+    .players {
+      margin-top: 15px;
+    }
+
+    .player {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .player img {
+      width: 32px;
+      height: 32px;
+      margin-right: 10px;
+      border-radius: 4px;
+    }
+
+    .footer {
+      margin-top: 15px;
+      font-size: 12px;
+      text-align: center;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="server-box" id="mc-status">
+  Lade Serverstatus...
+</div>
+
+<script>
+const SERVER_IP = "134.255.208.112:10040"; // z.B. play.meinserver.de
+const REFRESH_TIME = 20000; // 20 Sekunden
+
+async function loadStatus() {
+  try {
+    const response = await fetch(`https://api.mcsrvstat.us/2/${SERVER_IP}`);
+    const data = await response.json();
+    const box = document.getElementById("mc-status");
+
+    if (!data.online) {
+      box.innerHTML = `
+        <h2>Minecraft Server</h2>
+        <p class="offline">❌ Server offline</p>
+      `;
+      return;
+    }
+
+    let html = `
+      <h2>Minecraft Server</h2>
+      <p class="online">✅ Online</p>
+      <p>👥 Spieler: ${data.players.online} / ${data.players.max}</p>
+      <p>🧩 Version: ${data.version}</p>
+    `;
+
+    if (data.players.list && data.players.list.length > 0) {
+      html += `<div class="players"><strong>Spieler online:</strong><br><br>`;
+      data.players.list.forEach(player => {
+        html += `
+          <div class="player">
+            <img src="https://minotar.net/helm/${player}/32" alt="${player}">
+            ${player}
+          </div>
+        `;
+      });
+      html += `</div>`;
+    } else {
+      html += `<p>Niemand ist gerade online.</p>`;
+    }
+
+    html += `<div class="footer">Auto-Refresh alle 20 Sekunden</div>`;
+    box.innerHTML = html;
+
+  } catch (error) {
+    document.getElementById("mc-status").innerHTML =
+      "<p>⚠️ Fehler beim Laden des Serverstatus</p>";
+  }
+}
+
+// Initial laden
+loadStatus();
+
+// Auto-Refresh
+setInterval(loadStatus, REFRESH_TIME);
+</script>
+
+</body>
+</html>
