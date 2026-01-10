@@ -66,12 +66,12 @@
 <body>
 
 <div class="server-box" id="mc-status">
-  Lade Serverstatus...
+  Lade Serverstatus 🚦...
 </div>
 
 <script>
 const SERVER_IP = "134.255.208.112:10040"; // z.B. play.meinserver.de
-const REFRESH_TIME = 20000; // 20 Sekunden
+const REFRESH_TIME = 1000; // 20 Sekunden
 
 async function loadStatus() {
   try {
@@ -109,7 +109,7 @@ async function loadStatus() {
       html += `<p>Niemand ist gerade online.</p>`;
     }
 
-    html += `<div class="footer">Auto-Refresh alle 20 Sekunden</div>`;
+    html += `<div class="footer">Auto-Refresh jede Sekunde</div>`;
     box.innerHTML = html;
 
   } catch (error) {
@@ -127,3 +127,4 @@ setInterval(loadStatus, REFRESH_TIME);
 
 </body>
 </html>
+
